@@ -837,7 +837,7 @@
                     <p style="font-weight: 600; font-size: 18px; color: #333; margin-bottom: 20px;">
                         Book a 30-minute consultation – let's see how we can help your business!
                     </p>
-                    <a href="https://calendar.app.google/eV4U52Yz7B6goe6q7" target="_blank" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
+                    <a href="https://book-gabor.businessimpact.ai/" target="_blank" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
                         Schedule Appointment
                     </a>
                 </div>
@@ -847,6 +847,10 @@
     
     <script>
         const solutions = {
+            'calculator': {
+                title: 'AI & automation savings estimate',
+                savingsPercent: 50
+            },
             'whatsapp-real-estate': {
                 title: 'WhatsApp chatbot for real estate lead qualification',
                 savingsPercent: 50
@@ -975,13 +979,25 @@
             
             document.getElementById('screen1').classList.remove('active');
             document.getElementById('screen2').classList.add('active');
+            history.replaceState(null, '', '#' + solutionId);
             calculateSavings();
         }
         
         function goBack() {
             document.getElementById('screen2').classList.remove('active');
             document.getElementById('screen1').classList.add('active');
+            history.replaceState(null, '', location.pathname + location.search);
         }
+        
+        // Direct links: #calculator opens the calculator without picking a use case,
+        // #<solution-id> (e.g. #invoice-extraction) opens it for that use case
+        function openFromHash() {
+            const solutionId = location.hash.slice(1);
+            if (solutions[solutionId]) {
+                selectSolution(solutionId);
+            }
+        }
+        window.addEventListener('hashchange', openFromHash);
         
         function calculateHourlyRate() {
             const monthlySalary = parseFloat(document.getElementById('monthlySalary').value) || 0;
@@ -1018,6 +1034,7 @@
         
         // Calculate initial savings when page loads
         window.onload = function() {
+            openFromHash();
             if (document.getElementById('screen2').classList.contains('active')) {
                 calculateSavings();
             }
